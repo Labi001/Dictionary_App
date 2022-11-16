@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference 
+        app:key="clear_history_key"
+        app:title="Clear History"
+        app:icon="@drawable/ic_history"
+        app:summary="Here you can clear the history on your list"/>
+
+    <ListPreference
+        app:key="text_size_key"
+        app:title="Text Size"
+        app:icon="@drawable/ic_text_size"
+        app:summary="Normal"
+        android:defaultValue="15"
+        android:entries="@array/text_size_title"
+        android:entryValues="@array/text_size_values"/>
+
+    <Preference 
+        app:key="about_key"
+        app:title="About"
+        app:icon="@drawable/ic_about"
+       />
+
+
+
+</PreferenceScreen>
