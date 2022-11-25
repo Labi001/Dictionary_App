@@ -38,6 +38,7 @@ import com.labinot.dictionary.dataBaseHelper.DataBaseHelper;
 import com.labinot.dictionary.dataBaseHelper.LoadDatabaseAsyn;
 import com.labinot.dictionary.model.History;
 import com.labinot.dictionary.utils.Constants;
+import com.labinot.dictionary.utils.Helper;
 
 import java.util.ArrayList;
 
@@ -89,11 +90,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        loadViews();
+        initDataBase();
+        initSuggestion();
+        initSearchView();
+
+
+
+
+
+
+    }
+
+    private void loadViews() {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Helper.FixFlicker(MainActivity.this,R.id.appBar_Layout);
 
+        searchView = findViewById(R.id.search_view);
+        empty_layout = findViewById(R.id.empty_layout);
+        word_recyclerView = findViewById(R.id.word_recyclerView);
+    }
+
+    private void initDataBase() {
 
         dataBaseHelper = new DataBaseHelper(MainActivity.this,null);
 
@@ -106,6 +128,11 @@ public class MainActivity extends AppCompatActivity {
             loadDatabaseAsyn.execute();
         }
 
+
+    }
+
+    private void initSuggestion() {
+
         final String[] from = new String[]{EN_WORD};
         final int[] to =new int[]{R.id.suggestion_text};
 
@@ -117,18 +144,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        searchView = findViewById(R.id.search_view);
-        empty_layout = findViewById(R.id.empty_layout);
-        word_recyclerView = findViewById(R.id.word_recyclerView);
-        layoutManager = new LinearLayoutManager(MainActivity.this);
-        fetchHistory();
+        searchView.setSuggestionsAdapter(suggestionAdapter);
+
+    }
+
+    private void initSearchView() {
 
         ImageView search_icon = searchView.findViewById(androidx.appcompat.R.id.search_mag_icon);
         ImageView search_close = searchView.findViewById(androidx.appcompat.R.id.search_close_btn);
         search_close.setColorFilter(Color.DKGRAY);
         search_icon.setColorFilter(Color.DKGRAY);
-
-        searchView.setSuggestionsAdapter(suggestionAdapter);
 
         searchView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -151,11 +176,11 @@ public class MainActivity extends AppCompatActivity {
                 CursorAdapter cursorAdapter = searchView.getSuggestionsAdapter();
                 Cursor cursor = cursorAdapter.getCursor();
                 cursor.moveToPosition(position);
-                 String clicked_words = cursor.getString(cursor.getColumnIndex(EN_WORD));
+                String clicked_words = cursor.getString(cursor.getColumnIndex(EN_WORD));
 
-                 searchView.setQuery(clicked_words,false);
-                 searchView.clearFocus();
-                 searchView.setFocusable(false);
+                searchView.setQuery(clicked_words,false);
+                searchView.clearFocus();
+                searchView.setFocusable(false);
 
 
                 Intent intent = new Intent(MainActivity.this, WordMeaning_Activity.class);
@@ -225,6 +250,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+        layoutManager = new LinearLayoutManager(MainActivity.this);
+        fetchHistory();
     }
 
 
@@ -249,8 +276,9 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        word_recyclerView.setAdapter(recyclerViewAdapterHistory);
         word_recyclerView.setLayoutManager(layoutManager);
+        word_recyclerView.setAdapter(recyclerViewAdapterHistory);
+
 
         History history;
 
